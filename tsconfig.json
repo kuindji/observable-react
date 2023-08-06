@@ -1,0 +1,27 @@
+{
+    "compilerOptions": {
+        "jsx": "react-jsx",
+        "outDir": "dist",
+        "sourceMap": false,
+        "noImplicitAny": false,
+        "declaration": true,
+        "esModuleInterop": true,
+        "strict": true,
+        "module": "commonjs",
+        "target": "es5",
+        "lib": [
+            "dom",
+            "esnext"
+        ],
+        "types": [
+            "react"
+        ]
+    },
+    "include": [
+        "src/**/*",
+        "tests/**/*"
+    ],
+    "exclude": [
+        "dist"
+    ]
+}

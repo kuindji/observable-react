@@ -1,0 +1,44 @@
+{
+  "name": "@kuindji/react-observable",
+  "version": "2.2.1",
+  "description": "A javascript event bus implementing multiple patterns: observable, collector and pipe.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/**/*"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig-build.json --jsx react",
+    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
+    "lint": "tslint -p tsconfig-build.json",
+    "test": "npx ts-mocha -p tsconfig.json tests/**/*.spec.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kuindji/react-observable.git"
+  },
+  "author": "Ivan Kuindzhi",
+  "license": "ISC",
+  "keywords": [
+    "react",
+    "events",
+    "observable",
+    "pipe",
+    "collector",
+    "relay"
+  ],
+  "peerDependencies": {
+    "react": ">=16"
+  },
+  "devDependencies": {
+    "@kuindji/observable": "^2.2.1",
+    "prettier": "^3.0.1",
+    "prop-types": "^15.8.1",
+    "react": "^18.2.0",
+    "tslint-react": "^5.0.0",
+    "typescript": "^5.1.6"
+  },
+  "dependencies": {
+    "@types/react": "^18.2.18"
+  }
+}
