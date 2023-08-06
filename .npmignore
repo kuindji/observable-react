@@ -1,6 +1,12 @@
+node_modules
 src
+examples
 tsconfig.json
 tsconfig-build.json
 tslint.json
 .prettierrc
 tests
+__tests__
+babel.config.js
+jest.config.js
+yarn.lock

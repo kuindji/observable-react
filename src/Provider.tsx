@@ -1,18 +1,19 @@
-import React, { ReactNode } from "react"
+import React, { ReactNode, PropsWithChildren } from "react"
 import ObservableContext from "./Context"
 
 import type { ObservableProviderProps } from "./types"
 
-function ObservableProvider(props: ObservableProviderProps): ReactNode {
+function ObservableProvider(props: PropsWithChildren<ObservableProviderProps>): ReactNode {
 
-    const { observable, children } = props;
+    const { observable, children, context } = props;
+
+    const Context = context || ObservableContext;
     
     return (
-        <ObservableContext.Provider value={ observable }>
+        <Context.Provider value={ observable }>
             { children }
-        </ObservableContext.Provider>
+        </Context.Provider>
     );
-}
-
+};
 
 export default ObservableProvider

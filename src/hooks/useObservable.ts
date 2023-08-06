@@ -1,8 +1,9 @@
-import { useContext } from "react"
+import { useContext, Context } from "react"
 import ObservableContext from "../Context"
+import Observable from "@kuindji/observable"
 
-function useObservable() {
-    const context = useContext(ObservableContext);
+function useObservable(ctx?: Context<Observable | null>) {
+    const context = useContext(ctx || ObservableContext);
     return context;
 }
 

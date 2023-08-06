@@ -2,8 +2,6 @@ import { useMemo, useEffect, useRef } from "react"
 import Observable, { ListenerFunction, ListenerOptions } from "@kuindji/observable"
 import { ObservableHookEventList, ObservableHookEventMap, ObservableHookEventSetting } from "../types"
 
-
-
 function subscribe(o: Observable, list: ObservableHookEventList) {
     list.forEach(entry => {
         o.on(entry.name, entry.listener, entry.options);
@@ -33,18 +31,18 @@ function findEventListEntryIndex(list: ObservableHookEventList, entry: Observabl
     });
 };
 
-function getOldSubscriptions(prevList: ObservableHookEventList, 
-                            newList: ObservableHookEventList): ObservableHookEventList {
-    const old: ObservableHookEventList = [];
+function getDiff(a: ObservableHookEventList, b: ObservableHookEventList): ObservableHookEventList {
+    const c: ObservableHookEventList = [];
 
-    prevList.forEach(entry => {
-        if (findEventListEntryIndex(newList, entry) === -1) {
-            old.push(entry);
+    a.forEach(entry => {
+        if (findEventListEntryIndex(b, entry) === -1) {
+            c.push(entry);
         }
     });
 
-    return old;
+    return c;
 };
+
 
 function useOn(o: Observable | null, 
                 eventName: string | ObservableHookEventMap | ObservableHookEventList, 
@@ -78,20 +76,22 @@ function useOn(o: Observable | null,
     const prevList = useRef<ObservableHookEventList | null>(null);
 
     currList.current = list;
-
     
     useEffect(
         () => {
-            // need to synchronizes
+            // need to synchronize
             if (obsRef.current) {
                 if (prevList.current) {
-                    const oldEvents = getOldSubscriptions(prevList.current, list);
+                    const oldEvents = getDiff(prevList.current, list);
+                    const newEvents = getDiff(list, prevList.current);
                     unsubscribe(obsRef.current, oldEvents);
+                    subscribe(obsRef.current, newEvents);
                 }
                 else {
                     subscribe(obsRef.current, list);
                 }
-                prevList.current = list;
+                
+                prevList.current = [ ...list ];
             }
         },
         [ list ]
@@ -99,18 +99,27 @@ function useOn(o: Observable | null,
 
     useEffect(
         () => {
-            if (!obsRef.current && o) {
-                obsRef.current = o;
-                if (currList.current) {
-                    subscribe(obsRef.current, currList.current);
-                }
-            }
-            else if (obsRef.current && !o) {
-                unsubscribe(obsRef.current, currList.current);
-                obsRef.current = null;
+            if (obsRef.current === o) {
+                return;
             }
             else {
-                throw new Error("Cannot change Observable object");
+                if (obsRef.current === null && o !== null) {
+                    obsRef.current = o;
+                    if (currList.current) {
+                        subscribe(obsRef.current, currList.current);
+                    }
+                }
+                else if (obsRef.current !== null && o === null) {
+                    unsubscribe(obsRef.current, currList.current);
+                    obsRef.current = null;
+                }
+                else {
+                    if (currList.current) {
+                        !!obsRef.current && unsubscribe(obsRef.current, currList.current);
+                        !!o && subscribe(o, currList.current);
+                    }
+                    obsRef.current = o;
+                }
             }
         },
         [ o ]
@@ -119,6 +128,7 @@ function useOn(o: Observable | null,
     useEffect(
         () => () => {
             if (obsRef.current) {
+                prevList.current = null;
                 unsubscribe(obsRef.current, currList.current);
             }
         },
