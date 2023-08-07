@@ -1,5 +1,5 @@
 {
-  "name": "@kuindji/react-observable",
+  "name": "@kuindji/observable-react",
   "version": "1.0.0",
   "description": "React hooks for Observable (@kuindji/observable)",
   "main": "dist/index.js",
@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kuindji/react-observable.git"
+    "url": "git+https://github.com/kuindji/observable-react.git"
   },
   "author": "Ivan Kuindzhi",
   "license": "ISC",
