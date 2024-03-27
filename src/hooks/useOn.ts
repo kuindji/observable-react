@@ -4,13 +4,13 @@ import { ObservableHookEventList, ObservableHookEventMap, ObservableHookEventSet
 
 function subscribe(o: Observable, list: ObservableHookEventList) {
     list.forEach(entry => {
-        o.on(entry.name, entry.listener, entry.options);
+        o.on && o.on(entry.name, entry.listener, entry.options);
     })
 };
 
 function unsubscribe(o: Observable, list: ObservableHookEventList) {
     list.forEach(entry => {
-        o.un(entry.name, entry.listener, entry.options?.context);
+        o.un && o.un(entry.name, entry.listener, entry.options?.context);
     })
 };
 
