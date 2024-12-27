@@ -32,7 +32,7 @@
   "devDependencies": {
     "@babel/preset-env": "^7.22.9",
     "@babel/preset-react": "^7.22.5",
-    "@kuindji/observable": "^2.5.0",
+    "@kuindji/observable": "^2.6.0",
     "@types/chai": "^4.3.5",
     "@types/expect": "^24.3.0",
     "@types/mocha": "^10.0.1",

@@ -1369,10 +1369,10 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@kuindji/observable@^2.5.0":
-  version "2.5.0"
-  resolved "https://registry.yarnpkg.com/@kuindji/observable/-/observable-2.5.0.tgz#2ad75be102fc5f68fd65b76405f92173dd831ab3"
-  integrity sha512-2kw/V0ay7sOc7cwj21uAJT/RrqcJhuVYlEXybS5b61UPG7IKPji5impYBHFNqB7Bl52IZqgNnH6MgFBYUmgFHA==
+"@kuindji/observable@^2.6.0":
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/@kuindji/observable/-/observable-2.6.0.tgz#cae7f0dba7d824c113000f2fc655c5d5748e1837"
+  integrity sha512-TUe9RXcRPygEIQbYNb/zkrPJ2447jX+vCqfzuqlxlxXHOFnf2SAgxgeClIKjibHZPlc9xnVnYtEC+SLGI3DzPA==
 
 "@sinclair/typebox@^0.27.8":
   version "0.27.8"
