@@ -1,10 +1,12 @@
-import { useContext, Context } from "react"
-import ObservableContext from "../Context"
-import Observable from "@kuindji/observable"
+import { useContext, Context } from "react";
+import ObservableContext from "../Context";
+import Observable, { MapKey } from "@kuindji/observable";
 
-function useObservable(ctx?: Context<Observable | null>) {
+function useObservable<Id extends MapKey>(
+    ctx?: Context<Observable<Id> | null>
+) {
     const context = useContext(ctx || ObservableContext);
-    return context;
+    return context as Observable<Id> | null;
 }
 
-export default useObservable
+export default useObservable;

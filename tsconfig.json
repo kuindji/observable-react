@@ -15,10 +15,16 @@
         ],
         "types": [
             "react"
-        ]
+        ],
+        "paths": {
+            "@kuindji/observable": [
+                "../observable/src"
+            ]
+        }
     },
     "include": [
         "src/**/*",
+        "tmp/**/*",
         "tests/**/*"
     ],
     "exclude": [

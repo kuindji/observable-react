@@ -1,19 +1,24 @@
-import React, { ReactNode, PropsWithChildren } from "react"
-import ObservableContext from "./Context"
+import React, { ReactNode, Context } from "react";
+import Observable, { MapKey } from "@kuindji/observable";
+import ObservableContext from "./Context";
 
-import type { ObservableProviderProps } from "./types"
+function ObservableProvider<
+    O extends Observable,
+    Id_ extends MapKey = O extends Observable<infer Id> ? Id : MapKey,
+    Id extends MapKey = Id_
+>({
+    observable,
+    children,
+    context,
+}: {
+    observable: O;
+    children: ReactNode;
+    context: Context<Observable<Id>> | null;
+}): ReactNode {
+    const Ctx: Context<Observable<Id>> = (context ||
+        ObservableContext) as unknown as Context<Observable<Id>>;
 
-function ObservableProvider(props: PropsWithChildren<ObservableProviderProps>): ReactNode {
+    return <Ctx.Provider value={observable}>{children}</Ctx.Provider>;
+}
 
-    const { observable, children, context } = props;
-
-    const Context = context || ObservableContext;
-    
-    return (
-        <Context.Provider value={ observable }>
-            { children }
-        </Context.Provider>
-    );
-};
-
-export default ObservableProvider
+export default ObservableProvider;

@@ -9,6 +9,7 @@ import { useOn } from "@kuindji/observable-react"
 function MyComponent() {
 
     // create it here or get from somewhere else
+    // Typed observables are supported
     const observable = useMemo(() => new Observable(), []);
 
     // all parameters are dynamic

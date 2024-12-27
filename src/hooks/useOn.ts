@@ -1,139 +1,191 @@
-import { useMemo, useEffect, useRef } from "react"
-import Observable, { ListenerFunction, ListenerOptions } from "@kuindji/observable"
-import { ObservableHookEventList, ObservableHookEventMap, ObservableHookEventSetting } from "../types"
+import { useMemo, useEffect, useRef } from "react";
+import Observable, {
+    EventMap,
+    GetEventHandlerArguments,
+    GetEventHandlerReturnValue,
+    ListenerFunction,
+    ListenerOptions,
+    MapKey,
+} from "@kuindji/observable";
+import {
+    ObservableHookEventList,
+    ObservableHookEventMap,
+    ObservableHookEventSetting,
+} from "../types";
 
-function subscribe(o: Observable, list: ObservableHookEventList) {
-    list.forEach(entry => {
+function subscribe<Id extends MapKey>(
+    o: Observable<Id>,
+    list: ObservableHookEventList<Id>
+) {
+    list.forEach((entry) => {
         o.on && o.on(entry.name, entry.listener, entry.options);
-    })
-};
+    });
+}
 
-function unsubscribe(o: Observable, list: ObservableHookEventList) {
-    list.forEach(entry => {
+function unsubscribe<Id extends MapKey>(
+    o: Observable<Id>,
+    list: ObservableHookEventList<Id>
+) {
+    list.forEach((entry) => {
         o.un && o.un(entry.name, entry.listener, entry.options?.context);
-    })
-};
+    });
+}
 
-function findEventListEntryIndex(list: ObservableHookEventList, entry: ObservableHookEventSetting) {
-    return list.findIndex(e => {
+function findEventListEntryIndex<Id extends string | symbol>(
+    list: ObservableHookEventList<Id>,
+    entry: ObservableHookEventSetting<Id>
+) {
+    return list.findIndex((e) => {
         if (e.name !== entry.name) {
             return false;
         }
         if (e.listener !== entry.listener) {
             return false;
         }
-        if (!!e.options?.context && 
-                !!entry.options?.context && 
-                e.options.context !== entry.options.context) {
+        if (
+            !!e.options?.context &&
+            !!entry.options?.context &&
+            e.options.context !== entry.options.context
+        ) {
             return false;
         }
         return true;
     });
-};
+}
 
-function getDiff(a: ObservableHookEventList, b: ObservableHookEventList): ObservableHookEventList {
-    const c: ObservableHookEventList = [];
+function getDiff<Id extends string | symbol>(
+    a: ObservableHookEventList<Id>,
+    b: ObservableHookEventList<Id>
+): ObservableHookEventList<Id> {
+    const c: ObservableHookEventList<Id> = [];
 
-    a.forEach(entry => {
-        if (findEventListEntryIndex(b, entry) === -1) {
+    a.forEach((entry) => {
+        if (findEventListEntryIndex<Id>(b, entry) === -1) {
             c.push(entry);
         }
     });
 
     return c;
-};
+}
 
-
-function useOn(o: Observable | null, 
-                eventName: string | ObservableHookEventMap | ObservableHookEventList, 
-                listener?: ListenerFunction, 
-                listenerOptions?: ListenerOptions) {
-
-    if (typeof eventName === "string" && !listener) {
+function useOn<
+    O extends Observable | null,
+    Id extends string | symbol = O extends Observable<infer Id_> ? Id_ : any,
+    E_ extends
+        | keyof EventMap[Id]
+        | ObservableHookEventMap<Id>
+        | ObservableHookEventList<Id> = keyof EventMap[Id],
+    E extends MapKey = E_ extends keyof EventMap[Id] ? E_ : any
+>(
+    o: O,
+    eventSetup: E_,
+    listener?: ListenerFunction<
+        GetEventHandlerArguments<Id, E>,
+        GetEventHandlerReturnValue<Id, E>
+    >,
+    listenerOptions?: ListenerOptions<Id, E>
+): void {
+    if (typeof eventSetup === "string" && !listener) {
         throw new Error("Event listener is empty");
     }
 
-    const list = <ObservableHookEventList>useMemo(
-        () => {
-            if (Array.isArray(eventName)) {
-                return eventName;
-            }
-            if (typeof eventName === "string") {
-                return [{
-                    name: eventName,
-                    listener,
-                    options: listenerOptions
-                }]
-            }
+    const list = useMemo<
+        ObservableHookEventList<Id>
+    >((): ObservableHookEventList<Id> => {
+        if (Array.isArray(eventSetup)) {
+            return eventSetup;
+        }
 
-            return Object.keys(eventName).map(name => ({ name, listener: eventName[name] }));
-        },
-        [ eventName, listener, listenerOptions ]
-    );
+        if (
+            typeof eventSetup === "string" ||
+            typeof eventSetup === "symbol" ||
+            typeof eventSetup === "number"
+        ) {
+            return (<E extends keyof EventMap[Id]>(
+                name: E
+            ): ObservableHookEventList<Id> => [
+                {
+                    name: name as string | symbol,
+                    listener: listener as unknown as ListenerFunction<
+                        GetEventHandlerArguments<Id, E>,
+                        GetEventHandlerReturnValue<Id, E>
+                    >,
+                    options: listenerOptions as ListenerOptions<Id, E>,
+                },
+            ])(eventSetup);
+        }
 
-    const obsRef = useRef<Observable | null>(o);
-    const currList = useRef<ObservableHookEventList>(list);
-    const prevList = useRef<ObservableHookEventList | null>(null);
+        return Object.keys(eventSetup as ObservableHookEventMap<Id>).map(
+            <K extends keyof EventMap[Id]>(name: K) => ({
+                name,
+                listener: eventSetup[
+                    name as string | symbol
+                ] as ListenerFunction<
+                    GetEventHandlerArguments<Id, K>,
+                    GetEventHandlerReturnValue<Id, K>
+                >,
+            })
+        );
+    }, [eventSetup, listener, listenerOptions]);
+
+    const obsRef = useRef<Observable<Id> | null>(o as Observable<Id> | null);
+    const currList = useRef<ObservableHookEventList<Id>>(list);
+    const prevList = useRef<ObservableHookEventList<Id> | null>(null);
 
     currList.current = list;
-    
-    useEffect(
-        () => {
-            // need to synchronize
-            if (obsRef.current) {
-                if (prevList.current) {
-                    const oldEvents = getDiff(prevList.current, list);
-                    const newEvents = getDiff(list, prevList.current);
-                    unsubscribe(obsRef.current, oldEvents);
-                    subscribe(obsRef.current, newEvents);
-                }
-                else {
-                    subscribe(obsRef.current, list);
-                }
-                
-                prevList.current = [ ...list ];
-            }
-        },
-        [ list ]
-    );
 
-    useEffect(
-        () => {
-            if (obsRef.current === o) {
-                return;
+    useEffect(() => {
+        // need to synchronize
+        if (obsRef.current) {
+            if (prevList.current) {
+                const oldEvents = getDiff<Id>(prevList.current, list);
+                const newEvents = getDiff<Id>(list, prevList.current);
+                unsubscribe<Id>(obsRef.current, oldEvents);
+                subscribe<Id>(obsRef.current, newEvents);
+            } else {
+                subscribe<Id>(obsRef.current, list);
             }
-            else {
-                if (obsRef.current === null && o !== null) {
-                    obsRef.current = o;
-                    if (currList.current) {
-                        subscribe(obsRef.current, currList.current);
-                    }
+
+            prevList.current = [...list];
+        }
+    }, [list]);
+
+    useEffect(() => {
+        if (obsRef.current === o) {
+            return;
+        } else {
+            if (obsRef.current === null && o !== null) {
+                obsRef.current = o as Observable<Id>;
+                if (currList.current) {
+                    subscribe<Id>(obsRef.current, currList.current);
                 }
-                else if (obsRef.current !== null && o === null) {
-                    unsubscribe(obsRef.current, currList.current);
-                    obsRef.current = null;
+            } else if (obsRef.current !== null && o === null) {
+                unsubscribe<Id>(obsRef.current, currList.current);
+                obsRef.current = null;
+            } else {
+                if (currList.current) {
+                    !!obsRef.current &&
+                        unsubscribe<Id>(obsRef.current, currList.current);
+                    !!o &&
+                        subscribe<Id>(
+                            o as unknown as Observable<Id>,
+                            currList.current
+                        );
                 }
-                else {
-                    if (currList.current) {
-                        !!obsRef.current && unsubscribe(obsRef.current, currList.current);
-                        !!o && subscribe(o, currList.current);
-                    }
-                    obsRef.current = o;
-                }
+                obsRef.current = o as Observable<Id>;
             }
-        },
-        [ o ]
-    );
+        }
+    }, [o]);
 
     useEffect(
         () => () => {
             if (obsRef.current) {
                 prevList.current = null;
-                unsubscribe(obsRef.current, currList.current);
+                unsubscribe<Id>(obsRef.current, currList.current);
             }
         },
         []
     );
-};
+}
 
-export default useOn
+export default useOn;

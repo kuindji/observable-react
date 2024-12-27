@@ -1,20 +1,35 @@
-import { Context } from "react"
-import Observable from "@kuindji/observable"
-import { ListenerFunction, ListenerOptions } from "@kuindji/observable"
+import { Context } from "react";
+import Observable, {
+    EventMap,
+    MapKey,
+    GetEventHandlerArguments,
+    GetEventHandlerReturnValue,
+} from "@kuindji/observable";
+import { ListenerFunction, ListenerOptions } from "@kuindji/observable";
 
-export type ObservableProviderProps = {
-    observable: Observable,
-    context?: Context<Observable>
+export type ObservableProviderProps<Id extends MapKey> = {
+    observable: Observable<Id>;
+    context?: Context<Observable<Id>>;
 };
 
-export type ObservableHookEventMap = {
-    [key: string]: ListenerFunction
+export type ObservableHookEventMap<Id extends MapKey> = {
+    [E in keyof EventMap[Id]]: ListenerFunction<
+        GetEventHandlerArguments<Id, E>,
+        GetEventHandlerReturnValue<Id, E>
+    >;
 };
 
-export type ObservableHookEventSetting = {
-    name: string,
-    listener: ListenerFunction,
-    options?: ListenerOptions
+export type ObservableHookEventSetting<
+    Id extends MapKey,
+    E extends keyof EventMap[Id] = keyof EventMap[Id]
+> = {
+    name: E;
+    listener: ListenerFunction<
+        GetEventHandlerArguments<Id, E>,
+        GetEventHandlerReturnValue<Id, E>
+    >;
+    options?: ListenerOptions<Id, E>;
 };
 
-export type ObservableHookEventList = ObservableHookEventSetting[];
+export type ObservableHookEventList<Id extends MapKey> =
+    ObservableHookEventSetting<Id>[];

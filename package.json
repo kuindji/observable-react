@@ -1,6 +1,6 @@
 {
   "name": "@kuindji/observable-react",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "React hooks for Observable (@kuindji/observable)",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -37,15 +37,16 @@
     "@types/expect": "^24.3.0",
     "@types/mocha": "^10.0.1",
     "@types/sinon": "^10.0.15",
+    "@types/node": "^18",
     "chai": "^4.3.7",
-    "events": "^3.3.0",
+    "events": "@latest",
     "mocha": "^10.2.0",
     "prettier": "^2.8.0",
     "sinon": "^15.2.0",
     "ts-mocha": "^10.0.0",
-    "typescript": "^5.1.6",
-    "@types/react": "^18.2.72",
+    "typescript": "@latest",
+    "@types/react": "@latest",
     "jest": "^29.7.0",
-    "react": "18"
+    "react": "@latest"
   }
 }
