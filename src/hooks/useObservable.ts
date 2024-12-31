@@ -1,12 +1,13 @@
 import { useContext, Context } from "react";
 import ObservableContext from "../Context";
-import Observable, { MapKey } from "@kuindji/observable";
+import Observable, { BaseMap, MapKey } from "@kuindji/observable";
 
-function useObservable<Id extends MapKey>(
-    ctx?: Context<Observable<Id> | null>
-) {
+function useObservable<
+    IdOrMap extends MapKey | BaseMap = never,
+    Map extends BaseMap = any
+>(ctx?: Context<Observable<IdOrMap, Map> | null>) {
     const context = useContext(ctx || ObservableContext);
-    return context as Observable<Id> | null;
+    return context as Observable<IdOrMap, Map> | null;
 }
 
 export default useObservable;

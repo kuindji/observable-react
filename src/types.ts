@@ -1,35 +1,43 @@
 import { Context } from "react";
-import Observable, {
-    EventMap,
-    MapKey,
-    GetEventHandlerArguments,
-    GetEventHandlerReturnValue,
-} from "@kuindji/observable";
-import { ListenerFunction, ListenerOptions } from "@kuindji/observable";
+import Observable, { MapKey, BaseMap } from "@kuindji/observable";
 
-export type ObservableProviderProps<Id extends MapKey> = {
-    observable: Observable<Id>;
-    context?: Context<Observable<Id>>;
+export type ObjectToUnionList<T> = T[keyof T][];
+
+export type ObservableProviderProps<
+    IdOrMap extends MapKey | BaseMap = never,
+    Map extends BaseMap = any
+> = {
+    observable: Observable<IdOrMap, Map>;
+    context?: Context<Observable<IdOrMap, Map>>;
 };
 
-export type ObservableHookEventMap<Id extends MapKey> = {
-    [E in keyof EventMap[Id]]: ListenerFunction<
-        GetEventHandlerArguments<Id, E>,
-        GetEventHandlerReturnValue<Id, E>
-    >;
+// export type ObservableHookEventMap<Map extends BaseMap> = {
+//     [E in keyof Map]: Map[E]["handler"];
+// };
+export type ObservableHookEventMap<Map extends BaseMap> = {
+    [E in keyof Map]: Map[E]["handler"];
 };
 
 export type ObservableHookEventSetting<
-    Id extends MapKey,
-    E extends keyof EventMap[Id] = keyof EventMap[Id]
+    Map extends BaseMap,
+    E extends MapKey & keyof Map = keyof Map
 > = {
     name: E;
-    listener: ListenerFunction<
-        GetEventHandlerArguments<Id, E>,
-        GetEventHandlerReturnValue<Id, E>
-    >;
-    options?: ListenerOptions<Id, E>;
+    listener: Map[E]["handler"];
+    options?: Map[E]["listenerOptions"];
 };
 
-export type ObservableHookEventList<Id extends MapKey> =
-    ObservableHookEventSetting<Id>[];
+// export type ObservableHookEventList<
+//     Map extends BaseMap,
+//     MapWithName = {
+//         [K in keyof Map]: {
+//             name: K;
+//             listener: Map[K]["handler"];
+//             options: Map[K]["listenerOptions"];
+//         };
+//     }
+// > = MapWithName[keyof MapWithName][];
+// ObservableHookEventSetting<Map>[];
+
+export type ObservableHookEventList<Map extends BaseMap> =
+    ObservableHookEventSetting<Map>[];

@@ -7,6 +7,11 @@
       "outDir": "./dist",
       "strict": true,
       "jsx": "react-jsx",
+      "paths": {
+            "@kuindji/observable": [
+                "../observable/src/index.ts"
+            ]
+        }
     },
     "include": ["./src/**/*"],
     "exclude": ["./node_modules/**/*", "./tests/**/*", "./dist/**/*"]

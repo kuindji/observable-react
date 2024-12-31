@@ -15,7 +15,12 @@
         ],
         "types": [
             "react"
-        ]
+        ],
+        "paths": {
+            "@kuindji/observable": [
+                "../observable/src/index.ts"
+            ]
+        }
     },
     "include": [
         "src/**/*",
