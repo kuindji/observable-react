@@ -1,7 +1,4 @@
-import Provider from "./Provider"
-import Context from "./Context"
-import useOn from "./hooks/useOn"
-import useObservable from "./hooks/useObservable"
+import useOn from "./hooks/useOn";
 
-export * from "./types"
-export { Provider, useOn, useObservable, Context }
+export * from "./types";
+export { useOn };

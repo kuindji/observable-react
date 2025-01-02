@@ -11,9 +11,6 @@ export type ObservableProviderProps<
     context?: Context<Observable<IdOrMap, Map>>;
 };
 
-// export type ObservableHookEventMap<Map extends BaseMap> = {
-//     [E in keyof Map]: Map[E]["handler"];
-// };
 export type ObservableHookEventMap<Map extends BaseMap> = {
     [E in keyof Map]: Map[E]["handler"];
 };
@@ -26,18 +23,6 @@ export type ObservableHookEventSetting<
     listener: Map[E]["handler"];
     options?: Map[E]["listenerOptions"];
 };
-
-// export type ObservableHookEventList<
-//     Map extends BaseMap,
-//     MapWithName = {
-//         [K in keyof Map]: {
-//             name: K;
-//             listener: Map[K]["handler"];
-//             options: Map[K]["listenerOptions"];
-//         };
-//     }
-// > = MapWithName[keyof MapWithName][];
-// ObservableHookEventSetting<Map>[];
 
 export type ObservableHookEventList<Map extends BaseMap> =
     ObservableHookEventSetting<Map>[];

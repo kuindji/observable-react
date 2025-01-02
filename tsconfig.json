@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "jsx": "react-jsx",
-        "outDir": "dist",
+        "outDir": "./dist",
         "sourceMap": false,
         "noImplicitAny": false,
         "declaration": true,
@@ -15,19 +15,11 @@
         ],
         "types": [
             "react"
-        ],
-        "paths": {
-            "@kuindji/observable": [
-                "../observable/src/index.ts"
-            ]
-        }
+        ]
     },
     "include": [
-        "src/**/*",
-        "tmp/**/*",
-        "tests/**/*"
+        "./src/**/*",
+        "./tests/**/*"
     ],
-    "exclude": [
-        "dist"
-    ]
+    "exclude": ["./node_modules/**/*", "./tests/**/*", "./dist/**/*", "./tmp/**/*"]
 }
