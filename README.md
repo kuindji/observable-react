@@ -1,4 +1,7 @@
 # Observable React hooks
+
+> ⚠️ **DEPRECATED**: This package is no longer maintained. Further development has moved to [@kuindji/reactive](https://www.npmjs.com/package/@kuindji/reactive). Please migrate to the new package for continued support and new features.
+
 React hooks for Observable (@kuindji/observable)
 
 ## useOn
